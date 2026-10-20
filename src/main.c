@@ -159,9 +159,9 @@ void refreshScreen(SDL_Surface *s, SDL_Renderer *r, SDL_Texture *t)
 		red = fbc_get_int("display", "red");
 		green = fbc_get_int("display", "green");
 		blue = fbc_get_int("display", "blue");
-		red = fbc_get_int("display", "bg_red");
-		green = fbc_get_int("display", "bg_green");
-		blue = fbc_get_int("display", "bg_blue");
+		bg_red = fbc_get_int("display", "bg_red");
+		bg_green = fbc_get_int("display", "bg_green");
+		bg_blue = fbc_get_int("display", "bg_blue");
 	}
 
 	// Map the foreground and background colours
