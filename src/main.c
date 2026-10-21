@@ -28,7 +28,7 @@ void FAIL(char *err)
 	exit(EXIT_FAILURE);
 }
 
-static int load_fd()
+static int load_fd(void)
 {
 	int writeable = 1;
 
@@ -48,7 +48,7 @@ static int load_fd()
 	}
 }
 
-static int load_hd()
+static int load_hd(void)
 {
 	int ret = 0;
 	const char *disk1 = fbc_get_string("hard_disk", "disk1");
@@ -436,13 +436,13 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Error creating SDL FB texture: %s.\n", SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
-    SDL_Surface *screen = SDL_CreateRGBSurface(0, 720, 348, 32, 0, 0, 0, 0);
+	SDL_Surface *screen = SDL_CreateRGBSurface(0, 720, 348, 32, 0, 0, 0, 0);
 	if (!screen){
 		fprintf(stderr, "Error creating SDL FB surface: %s.\n", SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
 	// Load in status LED sprites
-    SDL_Surface *surf = SDL_CreateRGBSurfaceFrom((void*)lightbar.pixel_data, lightbar.width, lightbar.height,
+	SDL_Surface *surf = SDL_CreateRGBSurfaceFrom((void*)lightbar.pixel_data, lightbar.width, lightbar.height,
 														lightbar.bytes_per_pixel*8, lightbar.bytes_per_pixel*lightbar.width,
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 														0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF
@@ -678,7 +678,7 @@ int main(int argc, char *argv[])
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 
-    	// clean up all hardware state
+	// clean up all hardware state
 	state_done();
 
 	return 0;

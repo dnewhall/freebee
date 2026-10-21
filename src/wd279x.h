@@ -13,23 +13,23 @@ typedef enum {
 	WD2797_REG_COMMAND		= 0,		///< Command register
 	WD2797_REG_TRACK		= 1,		///< Track register
 	WD2797_REG_SECTOR		= 2,		///< Sector register
-	WD2797_REG_DATA			= 3			///< Data register
+	WD2797_REG_DATA			= 3		///< Data register
 } WD2797_REG;
 
 /// WD279x emulator error codes
 typedef enum {
 	WD2797_ERR_OK			= 0,		///< Operation succeeded
 	WD2797_ERR_BAD_GEOM		= -1,		///< Bad geometry, or image file too small
-	WD2797_ERR_NO_MEMORY	= -2		///< Out of memory
+	WD2797_ERR_NO_MEMORY		= -2		///< Out of memory
 } WD2797_ERR;
 
 typedef struct {
 	// Current track, head and sector
-	int						track, head, sector;
+	int					track, head, sector;
 	// Track and sector registers
-	int						track_reg, sector_reg;
+	int					track_reg, sector_reg;
 	// Geometry of current disc
-	int						geom_secsz, geom_spt, geom_heads, geom_tracks;
+	int					geom_secsz, geom_spt, geom_heads, geom_tracks;
 	// IRQ status
 	bool					irq;
 	// Status of last command
@@ -39,18 +39,18 @@ typedef struct {
 	// The last value written to the data register
 	uint8_t					data_reg;
 	// Last step direction. -1 for "towards zero", 1 for "away from zero"
-	int						last_step_dir;
+	int					last_step_dir;
 	// Data buffer, current DRQ pointer and length
 	uint8_t					*data;
 	size_t					data_pos, data_len;
 	// Current disc image file
 	FILE					*disc_image;
 	// Write protect flag
-	int						writeable;
+	int					writeable;
 	// LBA at which to start writing
-	int						write_pos;
+	int					write_pos;
 	// True if a format command is in progress
-	int						formatting;
+	int					formatting;
 	// Disc image format i/o
 	DISK_IMAGE				*dif;
 } WD2797_CTX;

@@ -56,14 +56,14 @@ static int wd2010_pre_label_init(WD2010_CTX *ctx, FILE *fp, int drivenum);
 
 /// WD2010 command constants
 enum {
-	CMD_MASK				= 0xF0,		///< Bit mask to detect command bits
+	CMD_MASK			= 0xF0,		///< Bit mask to detect command bits
 	CMD_2010_EXT			= 0x00,		///< WD2010 extended commands (compute correction, set parameter)
-	CMD_RESTORE				= 0x10,		///< Restore (recalibrate, seek to track 0)
+	CMD_RESTORE			= 0x10,		///< Restore (recalibrate, seek to track 0)
 	CMD_READ_SECTOR			= 0x20,		///< Read sector
 	CMD_WRITE_SECTOR		= 0x30,		///< Write sector
-	CMD_SCAN_ID				= 0x40,		///< Scan ID
+	CMD_SCAN_ID			= 0x40,		///< Scan ID
 	CMD_WRITE_FORMAT		= 0x50,		///< Write format
-	CMD_SEEK				= 0x70,		///< Seek to given track
+	CMD_SEEK			= 0x70,		///< Seek to given track
 };
 
 
@@ -581,4 +581,3 @@ void wd2010_write_reg(WD2010_CTX *ctx, uint8_t addr, uint8_t val)
 
 	}
 }
-

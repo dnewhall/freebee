@@ -15,20 +15,20 @@
 typedef struct
 {
 	uint8_t  data_mode; 		// data mode (5 = 250kbps DD, 4 = 300kbps DD)
-	uint8_t  cyl;  				// cylinder
-	uint8_t  head; 				// head, flags (cylinder map, head map)
-	uint8_t  spt;  				// sectors/track
+	uint8_t  cyl;  			// cylinder
+	uint8_t  head; 			// head, flags (cylinder map, head map)
+	uint8_t  spt;  			// sectors/track
 	uint8_t  secsz_code;  		// sector size code (secsz = 128 << secsz_code)
 } IMD_TRACK_HEADER;
 
 static int init_imd(struct disk_image *ctx, FILE *fp, int secsz, int heads, int tracks)
 {
 	uint8_t sdrType, track_sector_map[10], ch;
-    IMD_TRACK_HEADER trackHeader;
-    size_t filepos;
-    
+	IMD_TRACK_HEADER trackHeader;
+	size_t filepos;
+	
 	// write out and advance past comments
-    fseek(fp, 0, SEEK_SET);
+	fseek(fp, 0, SEEK_SET);
 	while (1) {
 		ch = fgetc(fp);
 		if (ch == IMD_END_OF_COMMENT || feof(fp))
@@ -48,9 +48,9 @@ static int init_imd(struct disk_image *ctx, FILE *fp, int secsz, int heads, int 
 	fseek(fp, filepos, SEEK_SET);
 	ctx->spt = trackHeader.spt;
 	
-    ctx->fp = fp;
-    ctx->secsz = secsz;
-    ctx->heads = heads;
+	ctx->fp = fp;
+	ctx->secsz = secsz;
+	ctx->heads = heads;
 
 	// allocate sectorMap
 	if (ctx->sectorMap) free(ctx->sectorMap);
@@ -95,7 +95,7 @@ static int init_imd(struct disk_image *ctx, FILE *fp, int secsz, int heads, int 
 				}
 		}
 	}
-    LOG("IMD file size: %li", ftell(fp));
+	LOG("IMD file size: %li", ftell(fp));
 	return ctx->spt;
 }
 
@@ -105,9 +105,9 @@ static void done_imd(struct disk_image *ctx)
 	ctx->sectorMap = NULL;
 	
 	ctx->fp = NULL;
-    ctx->secsz = 0;
-    ctx->heads = 0;
-    ctx->spt = 0;
+	ctx->secsz = 0;
+	ctx->heads = 0;
+	ctx->spt = 0;
 }
 
 static size_t read_sector_imd(struct disk_image *ctx, int cyl, int head, int sect, uint8_t *data)
@@ -137,7 +137,7 @@ static size_t read_sector_imd(struct disk_image *ctx, int cyl, int head, int sec
 		default:
 			fprintf(stderr, "unexpected sector data record: %i\n", sdrType);
 			return -1;
-		}
+	}
 	return bytes_read;
 }
 

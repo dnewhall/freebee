@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
 #include "wd279x.h"
 #include "wd2010.h"
 #include "keyboard.h"
@@ -61,12 +62,12 @@ int state_init(size_t base_ram_size, size_t exp_ram_size)
 	FILE *r14c, *r15c;
 	r14c = fopen(rom14c, "rb");
 	if (r14c == NULL) {
-		fprintf(stderr, "[state] Error loading roms/14c.bin.\n");
+		fprintf(stderr, "[state] Error loading ROM file %s: %s\n", rom14c, strerror(errno));
 		return -3;
 	}
 	r15c = fopen(rom15c, "rb");
 	if (r15c == NULL) {
-		fprintf(stderr, "[state] Error loading roms/15c.bin.\n");
+		fprintf(stderr, "[state] Error loading ROM file %s: %s\n", rom14c, strerror(errno));
 		return -3;
 	}
 
@@ -141,7 +142,7 @@ int state_init(size_t base_ram_size, size_t exp_ram_size)
 	return 0;
 }
 
-void state_done()
+void state_done(void)
 {
 	if (state.base_ram != NULL) {
 		free(state.base_ram);
@@ -159,5 +160,3 @@ void state_done()
 	// Deinitialise the serial controller
 	i8274_done(&state.serial_ctx);
 }
-
-

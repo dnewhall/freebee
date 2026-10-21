@@ -43,7 +43,7 @@
 #include "utils.h"
 #include "fbconfig.h"
 
-#ifdef __linux__
+#ifdef PTYS_SUPPORTED
 // needed for PTY functions, unlink, symlink
 #define __USE_XOPEN_EXTENDED
 
@@ -54,29 +54,29 @@
 #include <unistd.h>
 #endif
 
-#define WR1_EXT_INT_ENABLE			0x01	// Ext/Status Int Enable
-#define WR1_TX_INT_ENABLE			0x02	// TxInt Enable
+#define WR1_EXT_INT_ENABLE		0x01	// Ext/Status Int Enable
+#define WR1_TX_INT_ENABLE		0x02	// TxInt Enable
 #define WR1_STATUS_AFFECTS_VECTOR	0x04	// Status Affects Vector
 
 #define WR1_RX_INT_ENABLE_MASK		0x18	// RxInt Enable Mask
-#define WR1_RX_INT_DISABLE			0x00	// RxInt Disable
+#define WR1_RX_INT_DISABLE		0x00	// RxInt Disable
 #define WR1_RX_INT_FIRST_CHAR		0x08	// RxInt on First Character
 #define WR1_RX_INT_ALL_PARITY		0x10	// RxInt on All Characters (Parity error affects vector)
-#define WR1_RX_INT_ALL				0x18	// RxInt on All Characters (Parity error does not affect vector)
+#define WR1_RX_INT_ALL			0x18	// RxInt on All Characters (Parity error does not affect vector)
 
 #define WR2_VECTORED_INT_MODE		0x20	// Vectored Interrupt Mode
 
 #define RR0_RX_CHAR_AVAILABLE		0x01	// Rx Character Available
 #define RR0_INTERRUPT_PENDING		0x02	// Int Pending (Chan A only, always 0 in Chan B) - aka "Interrupt In-Service" -- turn on as soon as interrupt requested
-#define RR0_TX_BUFFER_EMPTY			0x04	// Tx Buffer Empty
-#define RR0_DCD						0x08	// Ext/Status Int - DCD* (Data Carrier Detect)
-#define RR0_SYNC_HUNT				0x10	// Ext/Status Int - SYNDET* status in Async mode, always pulled high on 3b1
-#define RR0_CTS						0x20	// Ext/Status Int - CTS* (Clear to Send)
-#define RR0_TX_UNDERRUN				0x40	// Ext/Status Int - Tx Underrun/End of Message
-#define RR0_BREAK					0x80	// Ext/Status Int - Break (Async mode: set when Break sequence (null char plus framing error) detected in data stream)
+#define RR0_TX_BUFFER_EMPTY		0x04	// Tx Buffer Empty
+#define RR0_DCD				0x08	// Ext/Status Int - DCD* (Data Carrier Detect)
+#define RR0_SYNC_HUNT			0x10	// Ext/Status Int - SYNDET* status in Async mode, always pulled high on 3b1
+#define RR0_CTS				0x20	// Ext/Status Int - CTS* (Clear to Send)
+#define RR0_TX_UNDERRUN			0x40	// Ext/Status Int - Tx Underrun/End of Message
+#define RR0_BREAK			0x80	// Ext/Status Int - Break (Async mode: set when Break sequence (null char plus framing error) detected in data stream)
 
-#define RR1_ALL_SENT				0x01	// All Sent
-#define RR1_PARITY_ERROR			0x10	// Parity Error
+#define RR1_ALL_SENT			0x01	// All Sent
+#define RR1_PARITY_ERROR		0x10	// Parity Error
 #define RR1_RX_OVERRUN_ERROR		0x20	// Overrun Error
 #define RR1_CRC_FRAMING_ERROR		0x40	// CRC/Framing Error
 
@@ -89,11 +89,14 @@ enum i8274_IRQ_PRIORITY_ORDER {
 	IRQ_TOTAL
 };
 
+#ifdef PTYS_SUPPORTED
 static const char* serial_pty_filename;
+#endif
 
 static bool fifo_empty(struct fifo *f) { return f->count == 0; }
-static bool fifo_full(struct fifo *f) { return f->count == FIFOSIZE; }
 static void fifo_reset(struct fifo *f) { f->count = f->head = f->tail = 0; }
+#ifdef PTYS_SUPPORTED
+static bool fifo_full(struct fifo *f) { return f->count == FIFOSIZE; }
 static int fifo_remaining(struct fifo *f) { return (FIFOSIZE - f->count); }
 static void fifo_put(struct fifo *f, uint8_t data)
 {
@@ -102,6 +105,7 @@ static void fifo_put(struct fifo *f, uint8_t data)
   f->count++;
   if (f->head == FIFOSIZE) f->head = 0;
 }
+#endif
 static uint8_t fifo_get(struct fifo *f)
 {
   uint8_t data;
@@ -209,7 +213,7 @@ static void end_of_interrupt(I8274_CTX *ctx)
 
 static void pty_in(I8274_CTX *ctx)
 {
-#ifdef __linux__
+#ifdef PTYS_SUPPORTED
 	uint8_t inbuf[FIFOSIZE], *byteptr;
 	int bytes_read;
 
@@ -490,8 +494,12 @@ uint8_t i8274_data_in(I8274_CTX *ctx, i8274_CHANNEL_INDEX chan_id)
 
 static void pty_out(I8274_CTX *ctx, uint8_t byte_out)
 {
-#ifdef __linux__
-	(void) write(ctx->ptyfd, &byte_out, 1);
+#ifdef PTYS_SUPPORTED
+	size_t n;
+	n = write(ctx->ptyfd, &byte_out, 1);
+	if (n == -1) {
+		fprintf(stderr, "Could not write to pty: %s\n", strerror(errno));
+	}
 #endif
 }
 
@@ -636,12 +644,13 @@ void i8274_control_write(I8274_CTX *ctx, i8274_CHANNEL_INDEX chan_id, uint8_t da
 #endif
 }
 
-#ifdef __linux__
+#ifdef PTYS_SUPPORTED
 static void ttySetRaw(int fd)
 {
 	struct termios t;
+	int res;
 
-	tcgetattr(fd, &t);
+	(void) tcgetattr(fd, &t);
 
 	// Noncanonical mode - disable: signals, extended input processing, echoing
 	t.c_lflag &= ~(ICANON | ISIG | IEXTEN | ECHO);
@@ -658,38 +667,49 @@ static void ttySetRaw(int fd)
 	t.c_cc[VMIN] = 0;
 	t.c_cc[VTIME] = 0;
 
-	tcsetattr(fd, TCSAFLUSH, &t);
+	res = tcsetattr(fd, TCSAFLUSH, &t);
+	if (res == -1) {
+		fprintf(stderr, "Could not set pty to non-blocking: %s\n", strerror(errno));
+	}
 }
 #endif
 
 static void pty_init(I8274_CTX *ctx)
 {
-#ifdef __linux__	
+#ifdef PTYS_SUPPORTED
 	serial_pty_filename = fbc_get_string("serial", "symlink");
 	ctx->ptyfd = open("/dev/ptmx", O_RDWR | O_NONBLOCK);
-	(void)grantpt(ctx->ptyfd);
-	(void)unlockpt(ctx->ptyfd);
+	if (ctx->ptyfd == -1) {
+		fprintf(stderr, "Error opening pty: %s\n", strerror(errno));
+	}
+	(void) grantpt(ctx->ptyfd);
+	(void) unlockpt(ctx->ptyfd);
 	ttySetRaw(ctx->ptyfd);
 	unlink(serial_pty_filename);
-	if (symlink(ptsname(ctx->ptyfd), serial_pty_filename) == 0)
+	if (symlink(ptsname(ctx->ptyfd), serial_pty_filename) == 0) {
 		printf("Serial port (tty000) on pty %s\n", ptsname(ctx->ptyfd));
-	else
+	} else {
 		fprintf(stderr, "Error symlinking to pty: %s\n", strerror(errno));
+		(void) close(ctx->ptyfd);
+		ctx->ptyfd = -1;
+	}
 #endif
 }
 
 static void pty_done(I8274_CTX *ctx)
 {
-#ifdef __linux__
-	close(ctx->ptyfd);
-	unlink(serial_pty_filename);
+#ifdef PTYS_SUPPORTED
+	if (ctx->ptyfd != -1) {
+		(void) close(ctx->ptyfd);
+		(void) unlink(serial_pty_filename);
+	}
 #endif	
 }
 
 void i8274_init(I8274_CTX *ctx)
 {
-	memset(&ctx->chanA, 0, sizeof(ctx->chanA));
-	memset(&ctx->chanB, 0, sizeof(ctx->chanB));
+	(void) memset(&ctx->chanA, 0, sizeof(ctx->chanA));
+	(void) memset(&ctx->chanB, 0, sizeof(ctx->chanB));
 	ctx->chanA.id = CHAN_A;
 	ctx->chanB.id = CHAN_B;
 	channel_reset(ctx, CHAN_A);

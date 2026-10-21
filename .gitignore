@@ -1,8 +1,25 @@
 obj/*.o
 dep/*.d
 *~
+.\#*
+\#*
+*.autosave
 .*.sw?
 .~lock*
+._*
+.nfs*
+.nautilus
+.directory
+.DS_Store
+__MACOSX
+.Trash
+.Trashes
+Thumbs.db*
+*thumbs*.db
+*- Copy*
+*.log
+*.patch
+*.diff
 .buildnum
 
 # musashi build artefacts
@@ -23,21 +40,27 @@ src/version.h
 # final executable binary
 freebee
 3b1emu
+freebee.exe
+3b1emu.exe
+freebee.app
+3b1emu.app
 
 # tools
 makehdimg
 
-# ignore ROMs and techref
+# ignore ROMs, discs, and techref
 roms
 TRM
 misc
 discs
+archives
 
 # config file
 .freebee.toml
 
 # disc images
 *.img
+*.imd
 
 # serial port pty link
 serial-pty

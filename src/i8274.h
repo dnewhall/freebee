@@ -4,6 +4,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#ifdef __linux__
+#define PTYS_SUPPORTED
+#endif
+
 #define FIFOSIZE	128
 
 struct fifo {
@@ -34,7 +38,7 @@ typedef struct {
 	
 	i8274_IRQ_STATUS irq_request[6];
 
-#ifdef __linux__
+#ifdef PTYS_SUPPORTED
 	int ptyfd;
 #endif
 

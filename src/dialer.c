@@ -37,7 +37,7 @@ static DIALER_STATE dialer;
 /// audio callback.
 static struct {
 	bool	active;
-	int		amplitude;
+	int	amplitude;
 	double	phase_lo, phase_hi;		///< carried across buffers to avoid clicks
 	double	step_lo, step_hi;		///< radians per sample
 } tone;

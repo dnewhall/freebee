@@ -21,7 +21,7 @@ typedef struct disk_image {
 
 typedef enum {
 	DISK_IMAGE_RAW,
-	DISK_IMAGE_IMD				// ImageDisk
+	DISK_IMAGE_IMD			// ImageDisk
 } DISK_IMAGE_FORMAT;
 
 extern DISK_IMAGE raw_format;

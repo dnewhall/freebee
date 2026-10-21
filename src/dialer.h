@@ -39,9 +39,9 @@
  *		kOnSpeaker		0x0A00		base | 0x0200
  *		kTTtoLine		0x0930		base | 0x0100, tone level 0x30
  *		kCallProg		0x1000
- *		kNoSpeakerPhone	0x1700
+ *		kNoSpeakerPhone		0x1700
  *		kHandset		0x2900
- *		kOpenCircuit	0x4000
+ *		kOpenCircuit		0x4000
  *
  * soundDTMF() ORs kTTtoLine with kOnSpeaker to get 0x0B30, so 0x0100 and 0x0200
  * are independent enables rather than alternatives. phsub.c's beep records the
@@ -64,13 +64,13 @@
  * we currently only log.
  */
 typedef struct {
-	bool		active;			///< tone generator running
-	int			f_low;			///< low (row) DTMF frequency in Hz, if active
-	int			f_high;			///< high (column) DTMF frequency in Hz, if active
-	uint8_t		level;			///< volume/ringer mode nibble, uninterpreted
-	bool		to_speaker;		///< audible to the user
-	bool		to_line;		///< sent down the phone line
-	bool		to_handset;		///< handset path selected
+	bool		active;		///< tone generator running
+	int		f_low;		///< low (row) DTMF frequency in Hz, if active
+	int		f_high;		///< high (column) DTMF frequency in Hz, if active
+	uint8_t		level;		///< volume/ringer mode nibble, uninterpreted
+	bool		to_speaker;	///< audible to the user
+	bool		to_line;	///< sent down the phone line
+	bool		to_handset;	///< handset path selected
 	bool		call_progress;	///< call progress monitoring enabled
 	bool		open_circuit;	///< circuit/relay control asserted
 } DIALER_STATE;

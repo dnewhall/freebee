@@ -8,29 +8,29 @@
 
 /// WD2010 registers
 typedef enum {
-	WD2010_REG_ERROR					= 1, ///< Error register
+	WD2010_REG_ERROR			= 1, ///< Error register
 	WD2010_REG_WRITE_PRECOMP_CYLINDER	= 1, ///< Write precompensation cylinder register
-	WD2010_REG_SECTOR_COUNT				= 2, ///< Sector count register
-	WD2010_REG_SECTOR_NUMBER			= 3, ///< Sector number register
-	WD2010_REG_CYLINDER_LOW				= 4, ///< Low byte of cylinder
-	WD2010_REG_CYLINDER_HIGH			= 5, ///< High byte of cylinder
-	WD2010_REG_SDH						= 6, ///< Sector size, drive, and head
-	WD2010_REG_STATUS					= 7, ///< Status register
-	WD2010_REG_COMMAND					= 7, ///< Command register
-	UNIXPC_REG_MCR2						= 255	///< UNIX-PC MCR2 register (special!)
+	WD2010_REG_SECTOR_COUNT			= 2, ///< Sector count register
+	WD2010_REG_SECTOR_NUMBER		= 3, ///< Sector number register
+	WD2010_REG_CYLINDER_LOW			= 4, ///< Low byte of cylinder
+	WD2010_REG_CYLINDER_HIGH		= 5, ///< High byte of cylinder
+	WD2010_REG_SDH				= 6, ///< Sector size, drive, and head
+	WD2010_REG_STATUS			= 7, ///< Status register
+	WD2010_REG_COMMAND			= 7, ///< Command register
+	UNIXPC_REG_MCR2				= 255	///< UNIX-PC MCR2 register (special!)
 } WD2010_REG;
 
 /// WD2010 emulator error codes
 typedef enum {
 	WD2010_ERR_OK			= 0,		///< Operation succeeded
 	WD2010_ERR_BAD_GEOM		= -1,		///< Bad geometry, or image file too small
-	WD2010_ERR_NO_MEMORY	= -2,		///< Out of memory
-	WD2010_ERR_IO_ERROR	= -3		///< I/O problem
+	WD2010_ERR_NO_MEMORY		= -2,		///< Out of memory
+	WD2010_ERR_IO_ERROR		= -3		///< I/O problem
 } WD2010_ERR;
 
 typedef struct {
 	// Current track, head and sector
-	int						track, head, sector;
+	int					track, head, sector;
 	// Geometry of current disc
 	struct geom {
 		int	secsz, spt, heads, tracks;
@@ -48,7 +48,7 @@ typedef struct {
 	// MCR2 register (LSB is HDSEL3 - head select bit 3)
 	bool					mcr2_hdsel3, mcr2_ddrive1;
 	// Sector number and count registers
-	int						sector_number, sector_count;
+	int					sector_number, sector_count;
 	// Last command has the multiple sector flag set?
 	bool					multi_sector;
 	// Last command uses DRQ bit?
@@ -61,7 +61,7 @@ typedef struct {
 	// Current disc image file
 	FILE					*disc_image[2];
 	// LBA at which to start writing
-	int						write_pos;
+	int					write_pos;
 	// Flag to allow delaying DRQ
 	bool					drq;
 } WD2010_CTX;

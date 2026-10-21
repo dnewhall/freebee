@@ -14,19 +14,19 @@
 
 /// WD2797 command constants
 enum {
-	CMD_MASK				= 0xF0,		///< Bit mask to detect command bits
-	CMD_RESTORE				= 0x00,		///< Restore (recalibrate, seek to track 0)
-	CMD_SEEK				= 0x10,		///< Seek to given track
-	CMD_STEP				= 0x20,		///< Step
-	CMD_STEP_TU				= 0x30,		///< Step and update track register
-	CMD_STEPIN				= 0x40,		///< Step In
+	CMD_MASK			= 0xF0,		///< Bit mask to detect command bits
+	CMD_RESTORE			= 0x00,		///< Restore (recalibrate, seek to track 0)
+	CMD_SEEK			= 0x10,		///< Seek to given track
+	CMD_STEP			= 0x20,		///< Step
+	CMD_STEP_TU			= 0x30,		///< Step and update track register
+	CMD_STEPIN			= 0x40,		///< Step In
 	CMD_STEPIN_TU			= 0x50,		///< Step In and update track register
-	CMD_STEPOUT				= 0x60,		///< Step Out
+	CMD_STEPOUT			= 0x60,		///< Step Out
 	CMD_STEPOUT_TU			= 0x70,		///< Step Out and update track register
 	CMD_READ_SECTOR			= 0x80,		///< Read Sector
-	CMD_READ_SECTOR_MULTI	= 0x90,		///< Read Multiple Sectors
+	CMD_READ_SECTOR_MULTI		= 0x90,		///< Read Multiple Sectors
 	CMD_WRITE_SECTOR		= 0xA0,		///< Write Sector
-	CMD_WRITE_SECTOR_MULTI	= 0xB0,		///< Write Multiple Sectors
+	CMD_WRITE_SECTOR_MULTI		= 0xB0,		///< Write Multiple Sectors
 	CMD_READ_ADDRESS		= 0xC0,		///< Read Address (IDAM contents)
 	CMD_FORCE_INTERRUPT		= 0xD0,		///< Force Interrupt
 	CMD_READ_TRACK			= 0xE0,		///< Read Track
@@ -124,15 +124,15 @@ WD2797_ERR wd2797_load(WD2797_CTX *ctx, FILE *fp, int secsz, int heads, int trac
 		return WD2797_ERR_BAD_GEOM;
 	}
 	// Assign disk format accordingly
-    if (!memcmp(buf, "IMD ", 4)) {
-        ctx->dif = &imd_format;
+	if (!memcmp(buf, "IMD ", 4)) {
+		ctx->dif = &imd_format;
 	} else {
 		ctx->dif = &raw_format;
 	}
 
 	// Init disk format, and get spt (IMD's are 8 or 10, MS-DOS is 9)
-    ctx->geom_spt = ctx->dif->init(ctx->dif, fp, secsz, heads, tracks);
-    if (ctx->geom_spt < 1)
+	ctx->geom_spt = ctx->dif->init(ctx->dif, fp, secsz, heads, tracks);
+	if (ctx->geom_spt < 1)
 		return WD2797_ERR_BAD_GEOM;
 
 	// Allocate enough memory to store one disc track
@@ -196,7 +196,7 @@ uint8_t wd2797_read_reg(WD2797_CTX *ctx, uint8_t addr)
 			}
 			// FDC is busy if there is still data in the buffer
 			temp |= (ctx->data_pos < ctx->data_len) ? 0x81 : 0x00;	// if data in buffer, then DMA hasn't copied it yet, and we're still busy!
-																	// TODO: also if seek delay / read delay hasn't passed (but that's for later)
+										// TODO: also if seek delay / read delay hasn't passed (but that's for later)
 			return temp;
 
 		case WD2797_REG_TRACK:		// Track register

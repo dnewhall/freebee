@@ -190,7 +190,7 @@ endif
 # Version info generation
 ####
 # get the current build number
-VER_BUILDNUM	= $(shell cat .buildnum)
+VER_BUILDNUM	= $(shell cat .buildnum 2>/dev/null||echo 0)
 
 #### --- begin Git revision grabber ---
 # get the current Git ID

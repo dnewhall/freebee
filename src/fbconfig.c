@@ -223,7 +223,6 @@ fbc_get_bool(const char *heading, const char *item)
 		}
 	}
 
-
 	return get_default_bool(heading, item);
 }
 
@@ -244,7 +243,6 @@ fbc_get_int(const char *heading, const char *item)
 			}
 		}
 	}
-
 
 	return get_default_int(heading, item);
 }

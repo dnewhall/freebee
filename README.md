@@ -64,7 +64,10 @@ This is also called my "to-do" list...
 
 # Build instructions
 
-  - Install the `libsdl2-dev` package
+  - Install SDL 2 libraries
+    - Ubuntu/Debian Linux: `sudo apt-get libsdl2-dev`
+    - Red Hat/Fedora/Enterprise Linux: `sudo yum install SDL2-devel`
+    - MacOS: `sudo ports install libsdl2` (requires MacPorts)
   - Clone a copy of Freebee (remember to check out the submodules too)
     - `git clone --recurse-submodules https://github.com/philpem/freebee`
   - Build Freebee (run 'make')
@@ -82,6 +85,7 @@ This is also called my "to-do" list...
   - Arnold Robbins created a drive image installed with all sorts of tools: [here](https://www.skeeve.com/3b1/)
   - David Gesswein created a drive image for the VCF Museum: [here](http://www.pdp8online.com/3b1/demos.shtml)
   - Uncompress either of these images in the Freebee directory and rename the image to `hd.img`, or create a `.freebee.toml` file pointing to the image. (See the CONFIGURATION section of the man page.)
+    - To login, there should be a `root` user account with no password.
 
 ## Option 2: Do a fresh install
   - Download the 3B1 Foundation disk set from Bitsavers: [here](http://bitsavers.org/bits/ATT/unixPC/system_software_3.51/)

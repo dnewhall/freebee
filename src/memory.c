@@ -155,30 +155,30 @@ MEM_STATUS checkMemoryAccess(uint32_t addr, bool writing, bool dma)/*{{{*/
 	return MEM_ALLOWED;
 }/*}}}*/
 
-#define _ACCESS_CHECK_WR_BYTE(address)								\
-	do {															\
+#define _ACCESS_CHECK_WR_BYTE(address)							\
+	do {										\
 		switch (st = checkMemoryAccess(address, true, false)) {			\
-			case MEM_ALLOWED:										\
-				/* Access allowed */								\
-				break;												\
-			case MEM_PAGEFAULT:										\
-				/* Page fault */									\
+			case MEM_ALLOWED:						\
+				/* Access allowed */					\
+				break;							\
+			case MEM_PAGEFAULT:						\
+				/* Page fault */					\
 				state.genstat = 0x01FF | (state.pie ? 0x8400 : 0);	\
-				fault = true;										\
-				break;												\
-			case MEM_UIE:											\
-				/* User access to memory above 4MB */				\
+				fault = true;						\
+				break;							\
+			case MEM_UIE:							\
+				/* User access to memory above 4MB */			\
 				state.genstat = 0x10FF | (state.pie ? 0x8400 : 0);	\
-				fault = true;										\
-				break;												\
-			case MEM_KERNEL:										\
-			case MEM_PAGE_NO_WE:									\
+				fault = true;						\
+				break;							\
+			case MEM_KERNEL:						\
+			case MEM_PAGE_NO_WE:						\
 				/* kernel access or page not write enabled */		\
-				/* XXX: is this the correct value? */				\
+				/* XXX: is this the correct value? */			\
 				state.genstat = 0x11FF | (state.pie ? 0x8400 : 0);	\
-				fault = true;										\
-				break;												\
-		}															\
+				fault = true;						\
+				break;							\
+		}									\
 	}while (0)
 
 
@@ -205,56 +205,56 @@ MEM_STATUS checkMemoryAccess(uint32_t addr, bool writing, bool dma)/*{{{*/
 // have already written the first word when the second cycle faults; the 68010
 // bus error frame allows the faulting cycle to be continued, so nothing the
 // kernel does should be able to tell the difference.
-#define ACCESS_CHECK_WR(address, bits)								\
-	do {															\
-		bool fault = false;											\
-		uint32_t faultAddr = address;								\
-		MEM_STATUS st;												\
-		_ACCESS_CHECK_WR_BYTE(address);								\
-		if (!fault && bits == 32									\
+#define ACCESS_CHECK_WR(address, bits)							\
+	do {										\
+		bool fault = false;							\
+		uint32_t faultAddr = address;						\
+		MEM_STATUS st;								\
+		_ACCESS_CHECK_WR_BYTE(address);						\
+		if (!fault && bits == 32						\
 				&& ((address + 2) & ~0xfff) != (address & ~0xfff)){	\
-			_ACCESS_CHECK_WR_BYTE(address + 2);						\
-			if (fault) faultAddr = address + 2;						\
-		}															\
-		if (fault) {												\
-			if (bits >= 16)											\
-				state.bsr0 = 0x7C00;								\
-			else													\
+			_ACCESS_CHECK_WR_BYTE(address + 2);				\
+			if (fault) faultAddr = address + 2;				\
+		}									\
+		if (fault) {								\
+			if (bits >= 16)							\
+				state.bsr0 = 0x7C00;					\
+			else								\
 				state.bsr0 = (faultAddr & 1) ? 0x7E00 : 0x7D00;		\
-			if (st==MEM_UIE) state.bsr0 |= 0x8000; 					\
-			state.bsr0 |= (faultAddr >> 16);							\
-			state.bsr1 = faultAddr & 0xffff;							\
-			LOG_PF("Bus Error while writing, addr %08X, statcode %d", address, st);		\
-			if (state.ee) m68k_pulse_bus_error();					\
-			return;													\
-		}															\
+			if (st==MEM_UIE) state.bsr0 |= 0x8000; 				\
+			state.bsr0 |= (faultAddr >> 16);				\
+			state.bsr1 = faultAddr & 0xffff;				\
+			LOG_PF("Bus Error while writing, addr %08X, statcode %d", address, st);	\
+			if (state.ee) m68k_pulse_bus_error();				\
+			return;								\
+		}									\
 	} while (0)
 /*}}}*/
 
-#define _ACCESS_CHECK_RD_BYTE(address)									\
-	do {															\
-		switch (st = checkMemoryAccess(address, false, false)) {	\
-			case MEM_ALLOWED:										\
-				/* Access allowed */								\
-				break;												\
-			case MEM_PAGEFAULT:										\
-				/* Page fault */									\
+#define _ACCESS_CHECK_RD_BYTE(address)							\
+	do {										\
+		switch (st = checkMemoryAccess(address, false, false)) {		\
+			case MEM_ALLOWED:						\
+				/* Access allowed */					\
+				break;							\
+			case MEM_PAGEFAULT:						\
+				/* Page fault */					\
 				state.genstat = 0x41FF | (state.pie ? 0x8400 : 0);	\
-				fault = true;										\
-				break;												\
-			case MEM_UIE:											\
-				/* User access to memory above 4MB */				\
+				fault = true;						\
+				break;							\
+			case MEM_UIE:							\
+				/* User access to memory above 4MB */			\
 				state.genstat = 0x50FF | (state.pie ? 0x8400 : 0);	\
-				fault = true;										\
-				break;												\
-			case MEM_KERNEL:										\
-			case MEM_PAGE_NO_WE:									\
+				fault = true;						\
+				break;							\
+			case MEM_KERNEL:						\
+			case MEM_PAGE_NO_WE:						\
 				/* kernel access or page not write enabled */		\
-				/* XXX: is this the correct value? */				\
+				/* XXX: is this the correct value? */			\
 				state.genstat = 0x51FF | (state.pie ? 0x8400 : 0);	\
-				fault = true;										\
-				break;												\
-		}															\
+				fault = true;						\
+				break;							\
+		}									\
 	} while (0)
 
 /**
@@ -272,33 +272,33 @@ MEM_STATUS checkMemoryAccess(uint32_t addr, bool writing, bool dma)/*{{{*/
 // too, but only if it actually lands in a different page. If the first word
 // faults we return without checking the second, which is what the hardware
 // does -- the CPU aborts the long access on the first bus error.
-#define ACCESS_CHECK_RD(address, bits)								\
-	do {															\
-		bool fault = false;											\
-		uint32_t faultAddr = address;								\
-		MEM_STATUS st;												\
-		_ACCESS_CHECK_RD_BYTE(address);								\
-		if (!fault && bits == 32									\
+#define ACCESS_CHECK_RD(address, bits)							\
+	do {										\
+		bool fault = false;							\
+		uint32_t faultAddr = address;						\
+		MEM_STATUS st;								\
+		_ACCESS_CHECK_RD_BYTE(address);						\
+		if (!fault && bits == 32						\
 				&& ((address + 2) & ~0xfff) != (address & ~0xfff)){	\
-			_ACCESS_CHECK_RD_BYTE(address + 2);						\
-			if (fault) faultAddr = address + 2;						\
-		}															\
-																	\
-		if (fault) {												\
-			if (bits >= 16)											\
-				state.bsr0 = 0x7C00;								\
-			else													\
+			_ACCESS_CHECK_RD_BYTE(address + 2);				\
+			if (fault) faultAddr = address + 2;				\
+		}									\
+											\
+		if (fault) {								\
+			if (bits >= 16)							\
+				state.bsr0 = 0x7C00;					\
+			else								\
 				state.bsr0 = (faultAddr & 1) ? 0x7E00 : 0x7D00;		\
-			if (st==MEM_UIE) state.bsr0 |= 0x8000;					\
-			state.bsr0 |= (faultAddr >> 16);							\
-			state.bsr1 = faultAddr & 0xffff;							\
-			LOG_PF("Bus Error while reading, addr %08X, statcode %d", faultAddr, st);		\
-			if (state.ee) m68k_pulse_bus_error();					\
-			if (bits >= 32)											\
-				return EMPTY & 0xFFFFFFFF;									\
-			else													\
-				return EMPTY & ((1ULL << bits)-1);								\
-		}															\
+			if (st==MEM_UIE) state.bsr0 |= 0x8000;				\
+			state.bsr0 |= (faultAddr >> 16);				\
+			state.bsr1 = faultAddr & 0xffff;				\
+			LOG_PF("Bus Error while reading, addr %08X, statcode %d", faultAddr, st);	\
+			if (state.ee) m68k_pulse_bus_error();				\
+			if (bits >= 32)							\
+				return EMPTY & 0xFFFFFFFF;				\
+			else								\
+				return EMPTY & ((1ULL << bits)-1);			\
+		}									\
 	} while (0)
 /*}}}*/
 
@@ -377,10 +377,10 @@ bool access_check_dma(int reading)
 }
 
 // Logging macros
-#define LOG_NOT_HANDLED_R(bits)															\
+#define LOG_NOT_HANDLED_R(bits)										\
 	if (!handled) printf("unhandled read%02d, addr=0x%08X\n", bits, address);
 
-#define LOG_NOT_HANDLED_W(bits)															\
+#define LOG_NOT_HANDLED_W(bits)										\
 	if (!handled) printf("unhandled write%02d, addr=0x%08X, data=0x%08X\n", bits, address, data);
 
 /********************************************************
@@ -1372,4 +1372,3 @@ uint32_t m68k_read_disassembler_8 (uint32_t addr)
 		return EMPTY & 0xff;
 	}
 }
-

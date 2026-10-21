@@ -20,4 +20,4 @@
 /// Get the number of elements in an array
 #define NELEMS(x) (sizeof(x)/sizeof(x[0]))
 
-#endif // _H_UTILS
+#endif // UTILS_H_

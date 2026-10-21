@@ -22,9 +22,9 @@
  * State error codes
  */
 typedef enum {
-	STATE_E_OK				= 0,	///< Operation succeeded
-	STATE_E_BAD_RAMSIZE		= -1,	///< Bad RAM size specified (not a multiple of 512K, or less than 512K)
-	STATE_E_NO_MEMORY		= -2,	///< Out of memory while allocating state variables
+	STATE_E_OK		= 0,	///< Operation succeeded
+	STATE_E_BAD_RAMSIZE	= -1,	///< Bad RAM size specified (not a multiple of 512K, or less than 512K)
+	STATE_E_NO_MEMORY	= -2,	///< Out of memory while allocating state variables
 	STATE_E_ROM_LOAD_FAIL	= -3	///< Error loading ROMs
 } STATE_ERR;
 
@@ -38,9 +38,9 @@ typedef struct {
 	uint8_t		rom[ROM_SIZE];		///< Boot PROM data buffer
 
 	//// Main system RAM
-	uint8_t		*base_ram;			///< Base RAM data buffer
+	uint8_t		*base_ram;		///< Base RAM data buffer
 	size_t		base_ram_size;		///< Size of Base RAM buffer in bytes
-	uint8_t		*exp_ram;			///< Expansion RAM data buffer
+	uint8_t		*exp_ram;		///< Expansion RAM data buffer
 	size_t		exp_ram_size;		///< Size of Expansion RAM buffer in bytes
 
 	/// Video RAM
@@ -50,13 +50,13 @@ typedef struct {
 	uint8_t		map[0x800];
 
 	//// Registers
-	uint16_t	genstat;			///< General Status Register
-	uint16_t	bsr0;				///< Bus Status Register 0
-	uint16_t	bsr1;				///< Bus Status Register 1
+	uint16_t	genstat;		///< General Status Register
+	uint16_t	bsr0;			///< Bus Status Register 0
+	uint16_t	bsr1;			///< Bus Status Register 1
 
 	//// MISCELLANEOUS CONTROL REGISTER
 	bool		dma_reading;		///< True if Disc DMA reads from the controller, false otherwise
-	uint8_t		leds;				///< LED status, 1=on, in order red3/green2/yellow1/red0 from bit3 to bit0
+	uint8_t		leds;			///< LED status, 1=on, in order red3/green2/yellow1/red0 from bit3 to bit0
 
 	/// The latched 60Hz interrupt request (level 6). Set by the periodic
 	/// timer, cleared only by pulsing MCR.CLRSINT low.
@@ -156,6 +156,6 @@ int state_init(size_t base_ram_size, size_t exp_ram_size);
  * Deinitialises the saved state, and frees all memory. Call this function
  * before exiting your program to avoid memory leaks.
  */
-void state_done();
+void state_done(void);
 
 #endif

@@ -29,9 +29,9 @@ static int init_raw(struct disk_image *ctx, FILE *fp, int secsz, int heads, int 
 static void done_raw(struct disk_image *ctx)
 {
 	ctx->fp = NULL;
-    ctx->secsz = 0;
-    ctx->heads = 0;
-    ctx->spt = 0;
+	ctx->secsz = 0;
+	ctx->heads = 0;
+	ctx->spt = 0;
 }
 
 static size_t read_sector_raw(struct disk_image *ctx, int cyl, int head, int sect, uint8_t *data)
