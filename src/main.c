@@ -411,7 +411,8 @@ int main(int argc, char *argv[])
 	// Set up the video display
 	SDL_Window *window;
 	if ((window = SDL_CreateWindow("FreeBee 3B1 Emulator", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-									(int) ceilf(720*scalex), (int) ceilf(348*scaley), 0)) == NULL) {
+									(int) ceilf(720*scalex), (int) ceilf(348*scaley),
+				       					SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI)) == NULL) {
 		fprintf(stderr, "Error creating SDL window: %s.\n", SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
@@ -423,7 +424,10 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Error creating SDL renderer: %s.\n", SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
-	SDL_RenderSetScale(renderer, scalex, scaley);
+	if (SDL_RenderSetLogicalSize(renderer, 720, 348) < 0) {
+		fprintf(stderr, "Error setting SDL logical display size: %s.\n", SDL_GetError());
+		exit(EXIT_FAILURE);
+	}
 	SDL_Texture *fbTexture = SDL_CreateTexture(renderer,
                                SDL_PIXELFORMAT_RGB888,
                                SDL_TEXTUREACCESS_STREAMING,
@@ -448,6 +452,10 @@ int main(int argc, char *argv[])
 	);
 	SDL_Texture *lightbarTexture = SDL_CreateTextureFromSurface(renderer, surf);
 	SDL_FreeSurface(surf);
+	if (!lightbarTexture){
+		fprintf(stderr, "Error creating SDL status texture: %s.\n", SDL_GetError());
+		exit(EXIT_FAILURE);
+	}
 
 	printf("Set %dx%d at %d bits-per-pixel mode\n\n", (int) ceilf(720*scalex), (int) ceilf(348*scaley), screen->format->BitsPerPixel);
 
